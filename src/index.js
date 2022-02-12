@@ -185,7 +185,7 @@ window.onload = function () {
         fs.renameSync(process.cwd() + path.sep + name, process.cwd() + path.sep + nowname)
         let nowpath = nowname
        
-        res.redirect( `/command/edit?path=${nowpath.replace('./', '')}`)
+        res.redirect( `/command/edit?path=${nowpath.replace('./', '').replace('/','')}`)
     })
     
     
