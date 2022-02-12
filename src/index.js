@@ -7,16 +7,21 @@ class Dash {
     let username = name.username;
     let pass = name.password;
     let command = name.command;
-    this.port = port;
+
+    this.bot = bot
+this.port = port
+this.username = username
+      this.pass = pass
+      this.cmd = command
     
 
-    dash_start(bot,port,command,username,pass);
   }
-}
-
-
-function dash_start(bot,port,command,user,pass) {
-
+start() {
+const bot = this.bot
+const port = this.port
+const command = this.cmd
+const user = this.username
+const pass = this.pass
     const path = require('path')
     const fs = require('fs')
     
@@ -2370,7 +2375,7 @@ function myFunction() {
     app.listen(port)
     console.log("dashboard ready in port: "+port)
     }
-
+}
 module.exports = {
   Dash
 }
