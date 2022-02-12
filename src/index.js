@@ -42,7 +42,7 @@ function dash_start(bot,port,command,user,pass) {
         let pathh = req.query.path
         let name = pathh.replace(/%2F/g, '/')
         pathh = pathh.replace(/%2F/g, ',')
-        let code = fs.readFileSync(path.join(__dirname, pathh))
+        let code = fs.readFileSync(path.join(process.cwd(), pathh))
         res.send(`
 <!DOCTYPE html>
 <html>
@@ -124,7 +124,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -180,8 +181,8 @@ window.onload = function () {
        name = name.replace(/\//g, path.sep)
         let nowname = command + path.sep + req.body.name
         nowname = nowname.replace(/\//g, path.sep)
-    fs.writeFileSync(__dirname + path.sep + name, req.body.code)
-        fs.renameSync(__dirname + path.sep + name, __dirname + path.sep + nowname)
+    fs.writeFileSync(process.cwd() + path.sep + name, req.body.code)
+        fs.renameSync(process.cwd() + path.sep + name, process.cwd() + path.sep + nowname)
         let nowpath = nowname
        
         res.redirect( `/command/edit?path=${nowpath.replace('./', '')}`)
@@ -293,7 +294,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -461,7 +463,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -620,7 +623,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -757,7 +761,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -886,7 +891,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1002,7 +1008,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1051,7 +1058,7 @@ window.onload = function () {
         let nowname = command + '/' + req.body.name
         nowname = nowname.replace(/\//g, path.sep)
    nowname = nowname.replace('./','')
-        fs.writeFileSync(__dirname + path.sep + nowname, req.body.code)
+        fs.writeFileSync(process.cwd() + path.sep + nowname, req.body.code)
         let nowpath = nowname.replace(/,/g, '%2F')
        
         res.redirect( `/command/edit?path=${nowpath}`)
@@ -1130,7 +1137,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1162,7 +1170,7 @@ function myFunction() {
        try {
            let pathh = req.query.path
            pathh = pathh.replace(/%2F/g, path.sep)
-           fs.unlinkSync(path.join(__dirname, pathh))
+           fs.unlinkSync(path.join(process.cwd(), pathh))
            res.redirect('/command')
            }
        catch (e) {
@@ -1239,7 +1247,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1344,7 +1353,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1447,7 +1457,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1546,7 +1557,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1657,7 +1669,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1686,7 +1699,7 @@ function myFunction() {
 
     })
     
-    app.get('/eval', islogin, async(req, res) => {
+    app.get('/djseval', islogin, async(req, res) => {
       res.send(`
 <!DOCTYPE html>
 <html>
@@ -1770,14 +1783,15 @@ body {
   <a href="/dash" class="active">Dashboard</a>
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/shell">Shell</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
 </div>
 
-<form action="eval" method='post' autocomplete='off'>
+<form action="djseval" method='post' autocomplete='off'>
 <textarea name='execute' id='execute' placeholder='Your node js code here' autocomplete='false'></textarea>
 <input type='submit' value='Send!'>
 </form>
@@ -1816,7 +1830,7 @@ window.onload = function () {
 
     })
     
-    app.post('/eval', islogin, async(req, res) => {
+    app.post('/djseval', islogin, async(req, res) => {
       let result;
         try {
             const client = bot
@@ -1910,14 +1924,291 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
 </div>
 
 <p style="padding: 10px; border: 2px solid white;">${require('util').inspect(result, {depth:0}).replace(/\n/g, '<br>')}</p>
-<form action="eval" method='post' autocomplete='off'>
+<form action="djseval" method='post' autocomplete='off'>
+<textarea placeholder='Type command to send to server' autocomplete='false' name='execute' id='execute'>${req.body.execute}</textarea>
+<input type='submit' value='Send!'>
+</form>
+<script>
+function myFunction() {
+  var x = document.getElementById("myTopnav");
+  if (x.className === "topnav") {
+    x.className += " responsive";
+  } else {
+    x.className = "topnav";
+  }
+}
+</script>
+<script>
+window.onload = function () {
+    var editor = CodeMirror.fromTextArea($("#execute")[0], {
+        lineNumbers: true,
+        lineWrapping: true,
+        mode: 'javascript',
+        theme: 'monokai'
+    });
+};
+</script>
+</body>
+</html>
+`) 
+
+    })
+    
+    
+     app.get('/aoieval', islogin, async(req, res) => {
+      res.send(`
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/javascript/javascript.js"></script>
+
+<link rel="stylesheet"
+
+  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
+<head>
+<title>DASHBOARD</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+              background-color: #001f3f;
+                color: #F5F5F5;
+                    }
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.topnav .icon {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .topnav a:not(:first-child) {display: none;}
+  .topnav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .topnav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="topnav" id="myTopnav">
+  <a href="/dash" class="active">Dashboard</a>
+  <a href="/command">Command</a>
+  <a href="/guild">Guild</a>
+  <a href="/shell">Shell</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a>
+</div>
+
+<form action="aoieval" method='post' autocomplete='off'>
+<textarea name='execute' id='execute' placeholder='Your aoi js code here' autocomplete='false'></textarea>
+<input type='submit' value='Send!'>
+</form>
+<script>
+function myFunction() {
+  var x = document.getElementById("myTopnav");
+  if (x.className === "topnav") {
+    x.className += " responsive";
+  } else {
+    x.className = "topnav";
+  }
+}
+</script>
+<script>
+
+window.onload = function () {
+
+    var editor = CodeMirror.fromTextArea($("#execute")[0], {
+
+        lineNumbers: true,
+
+        lineWrapping: true,
+
+        mode: 'javascript',
+
+        theme: 'monokai'
+
+    });
+
+};
+
+</script>
+</body>
+</html>
+`) 
+
+    })
+    
+    app.post('/aoieval', islogin, async(req, res) => {
+      let result;
+        try {
+            const client = bot
+      
+    result = await client.functionManager.interpreter(
+                    client,
+                    {},
+                    [],
+                    {
+                        name: "aoi Eval",
+                        code: `${req.body.execute}`,
+                    },
+                    client.db,
+                    true,
+                )
+
+        result = result.code
+            }
+        catch (e) {
+            result = e
+            }
+      res.send(`
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/javascript/javascript.js"></script>
+
+<link rel="stylesheet"
+
+  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
+<head>
+<title>DASHBOARD</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+              background-color: #001f3f;
+                color: #F5F5F5;
+                    }
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.topnav .icon {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .topnav a:not(:first-child) {display: none;}
+  .topnav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .topnav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="topnav" id="myTopnav">
+  <a href="/dash" class="active">Dashboard</a>
+  <a href="/command">Command</a>
+  <a href="/guild">Guild</a>
+  <a href="/shell">Shell</a> 
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a>
+</div>
+
+<p style="padding: 10px; border: 2px solid white;">${require('util').inspect(result, {depth:0}).replace(/\n/g, '<br>')}</p>
+<form action="aoieval" method='post' autocomplete='off'>
 <textarea placeholder='Type command to send to server' autocomplete='false' name='execute' id='execute'>${req.body.execute}</textarea>
 <input type='submit' value='Send!'>
 </form>
