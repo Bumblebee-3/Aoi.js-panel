@@ -135,7 +135,7 @@ body {
 
 <form action='/command/save' method='post'>
             <input type="hidden" name="path" value="${req.query.path}">
-            <input type="text" name="name" placeholder="Command name" value="${name.replace(command.replace('./', '') ,'').replace('/','')}" required>
+            <input type="text" name="name" placeholder="Command name" value="${name.replace(command.replace('./', '') ,'')}" required>
             <br>
            
 <textarea name="code" id="code" placeholder="your aoi.js code">${code}</textarea>
