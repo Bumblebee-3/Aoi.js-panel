@@ -1,7 +1,7 @@
 # Aoi.js-Panel
 ## A cool package for aoi.js bot's admin panels.
 
-#How to setup?
+# How to setup?
 ```js
 const aoidash = require('Aoi.js-panel')
 const dash = new aoidash.Dash({
@@ -11,6 +11,7 @@ command: './commands', //your command handler
 username: "username", //username to login to dashboard
 password: "password" //password to login to dashboard
 })
+dash.start()
 ```
 put that after your const bot
 
