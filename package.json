@@ -2,7 +2,7 @@
   "name": "Aoi.js-panel",
   "version": "1.2.0",
   "description": "A cool admin panel for aoi.js",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
     "build": "babel --presets env src -d ./ --ignore src/index.test.js",
     "dev": "babel --presets env src -d ./ --watch --ignore src/index.test.js",
