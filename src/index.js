@@ -7,12 +7,12 @@ class Dash {
     let username = name.username;
     let pass = name.password;
     let command = name.command;
-    console.log("Bot:"+bot);
-    console.log("port:"+port);
-    console.log("username:"+username);
-    console.log("pass:"+pass);
-    console.log("command:"+command);
+    this.port = port;
+    this.username = username;
+    this.password=pass;
+    this.commandfile=command;
     dash_start(bot,port,command,username,pass);
+    
   }
 }
 
