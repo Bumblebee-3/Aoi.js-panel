@@ -1,7 +1,7 @@
 {
-  "name": "npm-package-template",
+  "name": "Aoi.js-panel",
   "version": "1.2.0",
-  "description": "A template for writing NPM packages.",
+  "description": "A cool admin panel for aoi.js",
   "main": "index.js",
   "scripts": {
     "build": "babel --presets env src -d ./ --ignore src/index.test.js",
@@ -10,19 +10,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cleverbeagle/npm-package-template"
+    "url": "git+https://github.com/Bumblebee-3/Aoi.js-panel"
   },
   "keywords": [
     "npm",
     "package",
-    "template"
+    "aoi.js",
+    "dashboard",
+    "panel",
+    "admin panel",
+    "aoijs"
   ],
   "author": "cleverbeagle",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cleverbeagle/npm-package-template/issues"
+    "url": "https://github.com/Bumblebee-3/Aoi.js-panel/issues"
   },
-  "homepage": "http://cleverbeagle.com/packages/template",
+  "homepage": "https://github.com/Bumblebee-3/Aoi.js-panel",
   "dependencies": {
     "body-parser": "^1.19.1",
     "express": "^4.17.2",
