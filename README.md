@@ -36,6 +36,6 @@ dash.start()
 ### Project owner 
 [Fight Farewell Fearless#9295]
 ### Collaborators
-[Bumblebee#8199]
+[Bumblebee#8199] [❥ CODING WITH ARNOB ❥#0088]
 
 [Read the Documentation](http://cleverbeagle.com/packages/template)
