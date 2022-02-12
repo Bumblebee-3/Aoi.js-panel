@@ -1,10 +1,9 @@
-test('it puts the lotion in the basket', () => {
-  const basket = ['lotion'];
-  expect(basket.indexOf('lotion')).toBe(0);
+const dash=require("./index.js");
+const dt = new dash.Dash({
+  bot:bot,
+  port:3000,
+  username:"OHHHH",
+  pass:"ae",
+  command:"./commands/"
 });
 
-test('it throws an error', () => {
-  expect(() => {
-    throw new Error('Something went wrong.');
-  }).toThrow();
-});
