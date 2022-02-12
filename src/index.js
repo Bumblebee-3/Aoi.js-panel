@@ -7,6 +7,8 @@ class Dash {
     let username = name.username;
     let pass = name.pass;
     let command = name.command;
+    this.port = port;
+
 
     dash_start(bot,port,command,username,pass);
   }
@@ -40,7 +42,7 @@ function dash_start(bot,port,command,user,pass) {
         let pathh = req.query.path
         let name = pathh.replace(/%2F/g, '/')
         pathh = pathh.replace(/%2F/g, ',')
-        let code = fs.readFileSync(path.join(__dirname, pathh))
+        let code = fs.readFileSync("../"+pathh)
         res.send(`
 <!DOCTYPE html>
 <html>
