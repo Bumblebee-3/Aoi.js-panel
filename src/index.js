@@ -1,5 +1,4 @@
 
-
 class Dash {
   constructor(name) {
     let bot = name.bot;
@@ -363,8 +362,11 @@ function myFunction() {
     
     
     app.get('/dash', islogin, async(req,res) => {
+    
     let user = await bot.users.fetch('694184230271451166')
      let author = user.username + "#" + user.discriminator
+    let user2 = await bot.users.fetch('826320581518557194')
+     let author2 = user2.username + "#" + user2.discriminator
         res.send(`
 <!DOCTYPE html>
 <html>
@@ -458,6 +460,24 @@ body {
     display: block;
     text-align: left;
   }
+  .button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  }
+  .button {
+  transition-duration: 0.4s;
+  }
+
+  .button:hover {
+    background-color: #4CAF50; /* Green */
+    color: white;
+  }
 }
 </style>
 </head>
@@ -474,12 +494,15 @@ body {
     <i class="fa fa-bars"></i>
   </a>
 </div>
-
-Hi, thanks for using this dashboard. <br> your bot: "${bot.user.username}" is now connected to this dashboard. <br> you can contol your bot with this dashboard <br> <br> Credit: ${author}
+<div align=center style="color:white;text-align: center;font-size:1.5vw">
+<b style="color:white;text-align: center;font-size:5vw">Admin Panel For : ${bot.user.username}</b>
+<br>
+Credits: ${author} & ${author2}
 
 <br> <br> <br>
 <a href="/reboot" onclick="return confirm('Are you sure want to restart the server?')">
-<button type="button" style="text-align:center;background-color:red">Restart server</button></a>
+<button type="button" style="background-color: #4CAF50;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;" >Restart server</button></a>
+</div>
 <script>
 function myFunction() {
   var x = document.getElementById("myTopnav");
@@ -517,9 +540,11 @@ for (const filePath of walkSync(command)) {
   
 for(const rr of ff) {
    let pathh = rr.replace(/\//g, "%2F")
-    text += `<li><a href="/command/edit?path=${pathh}">
+    /*text += `<li><a href="/command/edit?path=${pathh}">
 <button type="button"> <img src="https://cdn.discordapp.com/emojis/837524136837251093.png" width="150" height="50"/><br>
-${rr}</button></a></li>`
+${rr}</button></a></li>`*/
+    text += `<label><li>
+<a href="/command/edit?path=${pathh}"><input type="image" name="guild" src="https://cdn.discordapp.com/emojis/837524136837251093.png" width="150px" height="150px" class="rounded-circle" onerror="this.src='https://cdn.discordapp.com/emojis/837524136837251093.png'" style="margin: 70px;border: 5px solid #ff0000;"  required><br><b><p style="color:white;text-align: center;">${rr}</p></b></a></li></label>`
     }
      }
         catch(e) {
@@ -531,7 +556,10 @@ ${rr}</button></a></li>`
 <head>
 <title>DASHBOARD COMMAND</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
 <style>
 body {
   margin: 0;
@@ -634,19 +662,26 @@ body {
     <i class="fa fa-bars"></i>
   </a>
 </div>
-<a href="/command/update">
-<button type="button" style="text-align:center;background-color:red">Update Command</button></a> <a href="/command/create">
+<div align=center>
+<h1>Create New Commands:<h1>
 
-<button type="button" style="text-align:center;background-color:blue">Create new command!</button></a>
+<a href="/command/update">
+<button type="button" style="background-color: GREEN;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;
+">Update Commands</button></a> <a href="/command/create">
+
+<button type="button" style="background-color: RED;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;
+">Create new command!</button></a>
+
 <br>
-<h1>You can click the image to open your command editor</h1>
+<h1>Or Edit commands:</h1>
+
 <br>
 <input type="search" id="search" onkeyup="search()" placeholder="Search command file">
     <ul id="list">
 ${text}
     </ul>
   </div>
-
+</div>
 <script>
 function search() {
   var input, filter, ul, li, a, i;
@@ -772,9 +807,11 @@ body {
     <i class="fa fa-bars"></i>
   </a>
 </div>
-<h1>List all guild your bot is in, you can click the picture to look into guild info</h1>
-<br>
+
+
 <div style="text-align: center;">
+<h1>Guilds the bot is in:</h1>
+<br>
 <input align=center type="search" id="search" onkeyup="search()" placeholder="Search Guild Name">
     <ul id="list">
 ${guild}
@@ -1568,13 +1605,14 @@ body {
     <i class="fa fa-bars"></i>
   </a>
 </div>
-
+<div align=center>
 <form action="shell" method='post' autocomplete='off'>
-<input autocomplete="false" type="text" name="hidden" style="display:none">
+<input autocomplete="false" type="textarea" name="hidden" style="display:none">
 
-<input type='text' name='execute' placeholder='Type command to send to server' autocomplete='false' style="width:50">
+<input type='text' name='execute' placeholder='Type command to send to server' autocomplete='false' style="width:100" size="50">
 <input type='submit' value='Send!'>
 </form>
+</div>
 <script>
 function myFunction() {
   var x = document.getElementById("myTopnav");
@@ -1939,7 +1977,9 @@ body {
 <p style="padding: 10px; border: 2px solid white;">${require('util').inspect(result, {depth:0}).replace(/\n/g, '<br>')}</p>
 <form action="djseval" method='post' autocomplete='off'>
 <textarea placeholder='Type command to send to server' autocomplete='false' name='execute' id='execute'>${req.body.execute}</textarea>
-<input type='submit' value='Send!'>
+<div align=center>
+<input type='submit' value='Send!' style="background-color: #4CAF50;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;">
+</div>
 </form>
 <script>
 function myFunction() {
@@ -2376,6 +2416,7 @@ function myFunction() {
     console.log("dashboard ready in port: "+port)
     }
 }
+
 module.exports = {
   Dash
 }
