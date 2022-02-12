@@ -14,6 +14,24 @@ password: "password" //password to login to dashboard
 dash.start()
 ```
 put that after your const bot
+## example usage
+```js
+const aoi = require("aoi.js")
+const bot = new aoi.Bot({
+token: "token",
+prefix: "!",
+intents: ["GUILDS", "GUILD_MESSAGES"]
+})
+const aoidash = require('Aoi.js-panel')
+const dash = new aoidash.Dash({
+port: 8080,
+bot: bot,
+command: './commands', //your command handler
+username: "aoi.js dash", //username to login to dashboard
+password: "is cool" //password to login to dashboard
+})
+dash.start()
+```
 
 ### Project owner 
 [Fight Farewell Fearless#9295]
