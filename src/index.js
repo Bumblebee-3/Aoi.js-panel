@@ -126,7 +126,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -295,7 +296,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -463,7 +465,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -622,7 +625,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -759,7 +763,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -888,7 +893,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1004,7 +1010,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1132,7 +1139,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1241,7 +1249,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1346,7 +1355,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1449,7 +1459,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1548,7 +1559,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1659,7 +1671,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1772,8 +1785,9 @@ body {
   <a href="/dash" class="active">Dashboard</a>
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/shell">Shell</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1912,7 +1926,8 @@ body {
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
-  <a href="/eval">Eval</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
