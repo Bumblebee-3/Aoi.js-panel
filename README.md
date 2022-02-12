@@ -38,4 +38,3 @@ dash.start()
 ### Collaborators
 [Bumblebee#8199] [❥ CODING WITH ARNOB ❥#0088]
 
-[Read the Documentation](http://cleverbeagle.com/packages/template)
