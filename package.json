@@ -23,11 +23,17 @@
     "url": "https://github.com/cleverbeagle/npm-package-template/issues"
   },
   "homepage": "http://cleverbeagle.com/packages/template",
-  "dependencies": {},
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "express": "^4.17.2",
+    "express-session": "^1.17.2",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7"
+  },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.6.0",
-    "jest": "^20.0.3"
+    "jest": "^27.5.1"
   }
 }
