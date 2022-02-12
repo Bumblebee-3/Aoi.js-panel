@@ -5,7 +5,7 @@ class Dash {
     let bot = name.bot;
     let port = name.port;
     let username = name.username;
-    let pass = name.pass;
+    let pass = name.password;
     let command = name.command;
     console.log("Bot:"+bot);
     console.log("port:"+port);
