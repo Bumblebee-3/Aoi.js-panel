@@ -3,7 +3,7 @@
 
 # How to setup?
 ```js
-const aoidash = require('Aoi.js-panel')
+const aoidash = require('aoi.js-panel')
 const dash = new aoidash.Dash({
 port: YOUR SERVER PORT,
 bot: bot,
@@ -22,7 +22,7 @@ token: "token",
 prefix: "!",
 intents: ["GUILDS", "GUILD_MESSAGES"]
 })
-const aoidash = require('Aoi.js-panel')
+const aoidash = require('aoi.js-panel')
 const dash = new aoidash.Dash({
 port: 8080,
 bot: bot,
