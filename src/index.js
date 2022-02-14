@@ -181,6 +181,7 @@ window.onload = function () {
     
     
     app.post('/command/save', islogin, function(req,res) {
+      try {
         let name = req.body.path
        name = name.replace(/\//g, path.sep)
         let nowname = command + path.sep + req.body.name
@@ -188,8 +189,108 @@ window.onload = function () {
     fs.writeFileSync(process.cwd() + path.sep + name, req.body.code)
         fs.renameSync(process.cwd() + path.sep + name, process.cwd() + path.sep + nowname)
         let nowpath = nowname
-       
+    
         res.redirect( `/command/edit?path=${nowpath.replace('./', '').replace('/','')}`)
+      }
+      catch (e) {
+      
+      res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+<title>DASHBOARD</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+              background-color: #001f3f;
+                color: #F5F5F5;
+                    }
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.topnav .icon {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .topnav a:not(:first-child) {display: none;}
+  .topnav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .topnav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="topnav" id="myTopnav">
+  <a href="/dash" class="active">Dashboard</a>
+  <a href="/command">Command</a>
+  <a href="/guild">Guild</a>
+  <a href="/shell">Shell</a>
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a>
+</div>
+
+Failed to save command with reason: ${e}
+
+<script>
+function myFunction() {
+  var x = document.getElementById("myTopnav");
+  if (x.className === "topnav") {
+    x.className += " responsive";
+  } else {
+    x.className = "topnav";
+  }
+}
+</script>
+
+</body>
+</html>
+`) 
+}
     })
     
     
@@ -1424,7 +1525,7 @@ function myFunction() {
     
     
     
- app.get('/404', islogin ,function (req,res,next) {
+ app.use(islogin ,function (req,res,next) {
         res.status(404)
        res.send(`
 <!DOCTYPE html>
@@ -2149,8 +2250,8 @@ window.onload = function () {
                     {},
                     [],
                     {
-                        name: "aoi Eval",
-                        code: `${req.body.execute}`,
+                        name: "aoi Eval",
+                        code: `${req.body.execute}`,
                     },
                     client.db,
                     true,
