@@ -32,7 +32,10 @@ password: "is cool" //password to login to dashboard
 })
 dash.start()
 ```
-
+## need example?
+[Click here](https://dash.pirles.tk)
+username: `user`
+password: `pass`
 ### Project owner 
 [Fight Farewell Fearless#9295]
 ### Collaborators
