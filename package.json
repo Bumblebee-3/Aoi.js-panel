@@ -1,6 +1,6 @@
 {
   "name": "aoi.js-panel",
-  "version": "1.2.3",
+  "version": "1.2.5",
   "description": "A cool admin panel for aoi.js",
   "main": "./src/index.js",
   "scripts": {
