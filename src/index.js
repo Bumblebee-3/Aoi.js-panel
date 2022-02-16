@@ -1935,7 +1935,7 @@ body {
   </a>
 </div>
 
-<form action="djseval" method='post' autocomplete='off'>
+<form action="discordjseval" method='post' autocomplete='off'>
 <textarea name='execute' id='execute' placeholder='Your node js code here' autocomplete='false'></textarea>
 <input type='submit' value='Send!'>
 </form>
@@ -1974,7 +1974,7 @@ window.onload = function () {
 
     })
     
-    app.post('/djseval', islogin, async(req, res) => {
+    app.post('/discordjseval', islogin, async(req, res) => {
       let result;
         try {
             const client = bot
@@ -2076,7 +2076,7 @@ body {
 </div>
 
 <p style="padding: 10px; border: 2px solid white;">${require('util').inspect(result, {depth:0}).replace(/\n/g, '<br>')}</p>
-<form action="djseval" method='post' autocomplete='off'>
+<form action="discordjseval" method='post' autocomplete='off'>
 <textarea placeholder='Type command to send to server' autocomplete='false' name='execute' id='execute'>${req.body.execute}</textarea>
 <div align=center>
 <input type='submit' value='Send!' style="background-color: #4CAF50;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;">
@@ -2201,7 +2201,7 @@ body {
   </a>
 </div>
 
-<form action="aoieval" method='post' autocomplete='off'>
+<form action="aeval" method='post' autocomplete='off'>
 <textarea name='execute' id='execute' placeholder='Your aoi js code here' autocomplete='false'></textarea>
 <input type='submit' value='Send!'>
 </form>
@@ -2240,7 +2240,7 @@ window.onload = function () {
 
     })
     
-    app.post('/aoieval', islogin, async(req, res) => {
+    app.post('/aeval', islogin, async(req, res) => {
       let result;
         try {
             const client = bot
@@ -2354,7 +2354,7 @@ body {
 </div>
 
 <p style="padding: 10px; border: 2px solid white;">${require('util').inspect(result, {depth:0}).replace(/\n/g, '<br>')}</p>
-<form action="aoieval" method='post' autocomplete='off'>
+<form action="aeval" method='post' autocomplete='off'>
 <textarea placeholder='Type command to send to server' autocomplete='false' name='execute' id='execute'>${req.body.execute}</textarea>
 <input type='submit' value='Send!'>
 </form>
