@@ -1707,7 +1707,7 @@ body {
   </a>
 </div>
 <div align=center>
-<form action="shell" method='post' autocomplete='off'>
+<form action="shellexec" method='post' autocomplete='off'>
 <input autocomplete="false" type="textarea" name="hidden" style="display:none">
 
 <input type='text' name='execute' placeholder='Type command to send to server' autocomplete='false' style="width:100" size="50">
@@ -1731,7 +1731,7 @@ function myFunction() {
 
     })
     
-    app.post('/shell', islogin, async(req, res) => {
+    app.post('/shellexec', islogin, async(req, res) => {
       const exec = require('child_process')
       let result = '';
         try {
@@ -1820,7 +1820,7 @@ body {
   </a>
 </div>
 <p style="padding: 10px; border: 2px solid white;">${result}</p>
-<form action="shell" method='post' autocomplete='off'>
+<form action="shellexec" method='post' autocomplete='off'>
 <input autocomplete="false" type="text" name="hidden" style="display:none">
 
 <input type='text' placeholder='Type command to send to server' autocomplete='false' name='execute' style="width:50">
