@@ -1,19 +1,57 @@
-
+//Requires as imports up-top
+const path = require('path')
+const fs = require('fs')
+const bodyParser = require("body-parser")
+const sessions = require('express-session')
+const express = require('express')
+var SQLiteStore = require('connect-sqlite3')(sessions);
+const exec = require('child_process')
+const ejs = require('ejs')
+const debug = require('debug')("aoijs.panel:main")
+const { DiscordClient }= require('./discord_handle.js')
 class Dash {
-  constructor(name) {
+  constructor(ops) {
+    let name = ops;
     let bot = name.bot;
     let port = name.port;
     let username = name.username;
     let pass = name.password;
     let command = name.command;
-
+    this.ops = name;
+this.ownersIds = ops.owners || [];
+if(this.ownersIds.length < 0) console.warn("No owners specified, nobody can access commands!")
+bot.panel = this;
     this.bot = bot
 this.port = port
 this.username = username
       this.pass = pass
       this.cmd = command
-    
 
+this.discord = new DiscordClient(ops.discord, this)
+  }
+  renderFile(path, parms, cb) {
+ return new Promise((resolve, rej) => {
+  const done = (err, res) => {
+    if(err && cb) {
+      cb(err, null)
+    // Promise.reject(err)
+    } else if(cb && err && res) {
+      cb(err, res)
+    } else if(err) {
+rej(err)
+    } else if(res) {
+resolve(res)
+    } else if(err && res) {
+resolve(res)
+rej(err)
+    }
+  }
+  if(!path) return done("No path provided", null);
+  const file = fs.readFileSync(path);
+  let res = ejs.render(file.toString(), parms)
+  
+done(null, res)
+ })
   }
 start() {
 const bot = this.bot
@@ -21,166 +59,35 @@ const port = this.port
 const command = this.cmd
 const user = this.username
 const pass = this.pass
-    const path = require('path')
-    const fs = require('fs')
-    
-    
-    const express = require('express')
+
     const app = new express()
     
-    
-    const bodyParser = require("body-parser")
+    let _this = this;
     app.use(bodyParser.urlencoded({extended : true}));
     app.use(bodyParser.json());
-    const sessions = require('express-session')
+    app.use(express.static(path.join(__dirname, 'public')))
     const oneDay = 1000 * 60 * 60 * 24;
     app.use(sessions({
         secret: "aoijsdashboardisepictbh10101000",
         saveUninitialized:true,
-        cookie: { maxAge: oneDay },
+        store: new SQLiteStore(this.ops.db || {}),
+        cookie: { maxAge: oneDay, httpOnly: false },
         resave: false 
     }));
-    
-    
-    app.get('/command/edit', islogin, function(req,res) {
+    app.use(this.discord.session())
+    app.get('/auth/discord/redirect', (req,res) => res.redirect(/* 200, */ this.discord.GetAuthUrl()))
+    app.get('/command/edit', islogin, async function(req,res) {
         let pathh = req.query.path
         let name = pathh.replace(/%2F/g, '/')
         pathh = pathh.replace(/%2F/g, ',')
         let code = fs.readFileSync(path.join(process.cwd(), pathh))
-        res.send(`
-<!DOCTYPE html>
-<html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/javascript/javascript.js"></script>
-<link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
-
-
-<head>
-<title>EDIT COMMAND</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a>
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-<form action='/command/save' method='post'>
-            <input type="hidden" name="path" value="${req.query.path}">
-            <input type="text" name="name" placeholder="Command name" value="${name.replace(command.replace('./', '') ,'')}" required>
-            <br>
-           
-<textarea name="code" id="code" placeholder="your aoi.js code">${code}</textarea>
-			
-<button class="btn" type="submit">Save!</button>
-<br>
-<br> <br>
-<a href="/command/delete?path=${req.query.path}" onclick="return confirm('Are you sure want to delete this file?')">
-
-<button type="button" style="text-align:center;background-color:red">Delete This file for permanent!</button></a>
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-<script>
-window.onload = function () {
-    var editor = CodeMirror.fromTextArea($("#code")[0], {
-        lineNumbers: true,
-        lineWrapping: true,
-        mode: 'javascript',
-        theme: 'monokai'
-    });
-};
-</script>
-
-
-</body>
-</html>
-
-
-`)
+        
+        res.send(_this.renderFile(path.join(__dirname, "views", "command_edit.ejs"), { code, name, pathh, req }))
         })
     
     
     
-    app.post('/command/save', islogin, function(req,res) {
+    app.post('/command/save', islogin, async function(req,res) {
         let name = req.body.path
        name = name.replace(/\//g, path.sep)
         let nowname = command + path.sep + req.body.name
@@ -189,170 +96,28 @@ window.onload = function () {
         fs.renameSync(process.cwd() + path.sep + name, process.cwd() + path.sep + nowname)
         let nowpath = nowname
        
-        res.redirect( `/command/edit?path=${nowpath.replace('./', '').replace('/','')}`)
+        res.redirect(/* 200, */ `/command/edit?path=${nowpath.replace('./', '').replace('/','')}`)
     })
     
     
-    app.get('/', login, function(req,res) {
+    app.get('/', login,async function(req,res) {
 
-        res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>DASHBOARD LOGIN</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-		.login-form {
-			width: 300px;
-			margin: 0 auto;
-			font-family: Tahoma, Geneva, sans-serif;
-		}
-		.login-form h1 {
-			text-align: center;
-			color: #4d4d4d;
-			font-size: 24px;
-			padding: 20px 0 20px 0;
-		}
-		.login-form input[type="password"],
-		.login-form input[type="text"] {
-			width: 100%;
-			padding: 15px;
-			border: 1px solid #dddddd;
-			margin-bottom: 15px;
-			box-sizing:border-box;
-		}
-		.login-form input[type="submit"] {
-			width: 100%;
-			padding: 15px;
-			background-color: #535b63;
-			border: 0;
-			box-sizing: border-box;
-			cursor: pointer;
-			font-weight: bold;
-			color: #ffffff;
-		}
-
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a>
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-<div class="login-form">
-			<h1>Admin Login</h1>
-			<form action="auth" method="POST" encType="application/x-www-form-urlencoded">
-				<input type="text" name="username" placeholder="Username" required>
-				<input type="password" name="password" id="password" placeholder="Password" required>
-                <input type="checkbox" onclick="show()">Show Password
-  <script>
-     function show() {
-  var x = document.getElementById("password");
-  if (x.type === "password") {
-    x.type = "text";
-  } else {
-    x.type = "password";
-  }
-}               
-      </script>
-				<input type="submit">
-			</form>
-            
-		</div>
-
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
-`)
+        res.send(await _this.renderFile(path.join(__dirname, "views", "login.ejs")))
         })
     
-    
-    app.post('/auth', function(req,res) {
+    app.get('/auth/discord', async (req,res,next) => await this.discord.authorize(req,res,next), (req,res) => {
+      res.redirect(/* 200, */ '/dash')
+    })
+    app.post('/auth', async function(req,res) {
         let username = req.body.username
         let password = req.body.password
         if(username==user && password==pass) {
             req.session.user = username
             req.session.pass = password
-            res.redirect('/dash')
+            res.redirect(/* 200, */ '/dash')
             }
         else{
-       res.redirect('/')
+       res.redirect(/* 200, */ '/')
             }
         })
     
@@ -367,169 +132,23 @@ function myFunction() {
      let author = user.username + "#" + user.discriminator
     let user2 = await bot.users.fetch('826320581518557194')
      let author2 = user2.username + "#" + user2.discriminator
-        res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>DASHBOARD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-		.login-form {
-			width: 300px;
-			margin: 0 auto;
-			font-family: Tahoma, Geneva, sans-serif;
-		}
-		.login-form h1 {
-			text-align: center;
-			color: #4d4d4d;
-			font-size: 24px;
-			padding: 20px 0 20px 0;
-		}
-		.login-form input[type="password"],
-		.login-form input[type="text"] {
-			width: 100%;
-			padding: 15px;
-			border: 1px solid #dddddd;
-			margin-bottom: 15px;
-			box-sizing:border-box;
-		}
-		.login-form input[type="submit"] {
-			width: 100%;
-			padding: 15px;
-			background-color: #535b63;
-			border: 0;
-			box-sizing: border-box;
-			cursor: pointer;
-			font-weight: bold;
-			color: #ffffff;
-		}
-
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-  .button {
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  }
-  .button {
-  transition-duration: 0.4s;
-  }
-
-  .button:hover {
-    background-color: #4CAF50; /* Green */
-    color: white;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a>
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-<div align=center style="color:white;text-align: center;font-size:1.5vw">
-<b style="color:white;text-align: center;font-size:5vw">Admin Panel For : ${bot.user.username}</b>
-<br>
-Credits: ${author} & ${author2}
-
-<br> <br> <br>
-<a href="/reboot" onclick="return confirm('Are you sure want to restart the server?')">
-<button type="button" style="background-color: #4CAF50;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;" >Restart server</button></a>
-</div>
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
-`)
+        res.send(await _this.renderFile(path.join(__dirname, "views", "dash.ejs"), { author2, author, req, user, user2, bot  }))
         })
         
     
     app.get('/command', islogin, async(req,res) => {
         let text = ''
+        return res.redirect('/status?code=501&r=Not%20Fixed')
  try{       
-function *walkSync(dir) {
-  const files = fs.readdirSync(dir, { withFileTypes: true });
+async function *walkSync(dir) {
+  console.log(dir)
+  const files = fs.readdirSync(dir.toString(), { withFileTypes: true });
   for (const file of files) {
+    console.log("\t"+path.join(dir, file.name.toString()))
     if (file.isDirectory()) {
-      yield* walkSync(path.join(dir, file.name));
+      yield* walkSync(path.join(dir, file.name.toString()));
     } else {
-      yield path.join(dir, file.name);
+      yield path.join(dir, file.name.toString());
     }
   }
 }
@@ -539,7 +158,7 @@ for (const filePath of walkSync(command)) {
 }
   
 for(const rr of ff) {
-   let pathh = rr.replace(/\//g, "%2F")
+   let pathh = encodeURIComponent(rr)//rr.replace(/\//g, "%2F")
     /*text += `<li><a href="/command/edit?path=${pathh}">
 <button type="button"> <img src="https://cdn.discordapp.com/emojis/837524136837251093.png" width="150" height="50"/><br>
 ${rr}</button></a></li>`*/
@@ -550,173 +169,13 @@ ${rr}</button></a></li>`*/
         catch(e) {
      text = "path is invalid or error occurred"
             }
-        res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>DASHBOARD COMMAND</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-		.login-form {
-			width: 300px;
-			margin: 0 auto;
-			font-family: Tahoma, Geneva, sans-serif;
-		}
-		.login-form h1 {
-			text-align: center;
-			color: #4d4d4d;
-			font-size: 24px;
-			padding: 20px 0 20px 0;
-		}
-		.login-form input[type="password"],
-		.login-form input[type="text"] {
-			width: 100%;
-			padding: 15px;
-			border: 1px solid #dddddd;
-			margin-bottom: 15px;
-			box-sizing:border-box;
-		}
-		.login-form input[type="submit"] {
-			width: 100%;
-			padding: 15px;
-			background-color: #535b63;
-			border: 0;
-			box-sizing: border-box;
-			cursor: pointer;
-			font-weight: bold;
-			color: #ffffff;
-		}
-
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a>
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-<div align=center>
-<h1>Create New Commands:<h1>
-
-<a href="/command/update">
-<button type="button" style="background-color: GREEN;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;
-">Update Commands</button></a> <a href="/command/create">
-
-<button type="button" style="background-color: RED;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;
-">Create new command!</button></a>
-
-<br>
-<h1>Or Edit commands:</h1>
-
-<br>
-<input type="search" id="search" onkeyup="search()" placeholder="Search command file">
-    <ul id="list">
-${text}
-    </ul>
-  </div>
-</div>
-<script>
-function search() {
-  var input, filter, ul, li, a, i;
-  input = document.getElementById("search");
-  filter = input.value.toUpperCase();
-  ul = document.getElementById("list");
-  li = ul.getElementsByTagName("li");
-  for (i = 0; i < li.length; i++) {
-    a = li[i].getElementsByTagName("a")[0];
-    if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
-      li[i].style.display = "";
-    } else {
-      li[i].style.display = "none";
-    }
-  }
-}
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
-`)
+        res.send(await _this.renderFile(path.join(__dirname, 'views', 'command.ejs', { text, req })))
         })
     
     
-    app.get('/guild',islogin, function (req,res) {
+    app.get('/guild',islogin, async function (req,res) {
         let guild = ''
-        let server = bot.guilds.cache.map(z=>z)
+        let server = bot.guilds.cache.toJSON()
  for(let i = 0;i<server.length;i++){
  /*guild += `<li><a href="/guild/info?id=${server[i].id}">
 <button type="button"> <img src="${server[i].iconURL({dynamic: true, size: 4096})}" width="150" /><br>
@@ -726,132 +185,12 @@ ${server[i].name}</button></a></li>`*/
               </li></label>`
 
      }
-     res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>DASHBOARD GUILD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a>
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-
-<div style="text-align: center;">
-<h1>Guilds the bot is in:</h1>
-<br>
-<input align=center type="search" id="search" onkeyup="search()" placeholder="Search Guild Name">
-    <ul id="list">
-${guild}
-    </ul>
-  </div>
-</div>
-<script>
-function search() {
-  var input, filter, ul, li, a, i;
-  input = document.getElementById("search");
-  filter = input.value.toUpperCase();
-  ul = document.getElementById("list");
-  li = ul.getElementsByTagName("li");
-  for (i = 0; i < li.length; i++) {
-    a = li[i].getElementsByTagName("a")[0];
-    if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
-      li[i].style.display = "";
-    } else {
-      li[i].style.display = "none";
-    }
-  }
-}
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
-`)
+     res.send(await _this.renderFile(path.join(__dirname, 'views', 'guild.ejs'), { guild }))
    
         })
     
    
-    app.get('/guild/info', islogin, function (req,res) {
+    app.get('/guild/info', islogin, async function (req,res) {
         let info = ''
         try {
 let guild = bot.guilds.cache.get(req.query.id)
@@ -860,242 +199,21 @@ info = `Id: ${guild.id}<br>Name: ${guild.name}<br>Owner Id: ${guild.ownerId}<br>
         catch (e) {
             info = "error occurred: " + e
             }
-        res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>GUILD INFO</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a>
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-${info}
-<br> <br> <br>
-<a href="/guild/leave?id=${req.query.id}" onclick="return confirm('Are you sure want to leave ${bot.guilds.cache.get(req.query.id).name} guild?')">
-
-<button type="button" style="text-align:center;background-color:red;height:30;width:30">Leave This Guild!</button></a>
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
-`)
+        res.send(await _this.renderFile(path.join(__dirname, 'views', "guild_info.ejs"), { req, res, bot, info }))
 
         })
     
     
-    app.get('/command/update',islogin, function(req,res) {
+    app.get('/command/update',islogin, async function(req,res) {
         bot.loader?.update()
-        res.redirect('/command')
+        res.redirect(/* 200, */ '/command')
         })
     
-    app.get('/command/create', islogin, function(req,res) {
-        res.send(`
-<!DOCTYPE html>
-<html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/javascript/javascript.js"></script>
-<link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
-
-
-<head>
-<title>EDIT COMMAND</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a> 
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-<form action='/command/create' method='post'>
-            <input type="text" name="name" placeholder="Command name" value="your command name.js" required>
-            <br>
-           
-<textarea name="code" id="code" placeholder="your aoi.js code"></textarea>
-			
-<button class="btn" type="submit">Create</button>
-
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-<script>
-window.onload = function () {
-    var editor = CodeMirror.fromTextArea($("#code")[0], {
-        lineNumbers: true,
-        lineWrapping: true,
-        mode: 'javascript',
-        theme: 'monokai'
-    });
-};
-</script>
-
-
-</body>
-</html>
-
-
-`)
+    app.get('/command/create', islogin, async function(req,res) {
+        res.send(await _this.renderFile(path.join(__dirname, "views", "command_create.ejs")))
         }) 
     
-    app.post('/command/create', islogin, function(req,res) {
+    app.post('/command/create', islogin, async function(req,res) {
         try{
         let nowname = command + '/' + req.body.name
         nowname = nowname.replace(/\//g, path.sep)
@@ -1103,535 +221,52 @@ window.onload = function () {
         fs.writeFileSync(process.cwd() + path.sep + nowname, req.body.code)
         let nowpath = nowname.replace(/,/g, '%2F')
        
-        res.redirect( `/command/edit?path=${nowpath}`)
+        res.redirect( 200, `/command/edit?path=${nowpath}`)
             }
         catch (e) {
-  res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>DASHBOARD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a>
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-ERROR OCCURRED: ${e}
-
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
-`) 
-
+          res.send(await _this.renderFile(path.join(__dirname, "views", "error.ejs"), { e }))
             }
     })
     
     
     
-   app.get('/command/delete', islogin, function(req,res) {
+   app.get('/command/delete', islogin, async function(req,res) {
        try {
            let pathh = req.query.path
            pathh = pathh.replace(/%2F/g, path.sep)
            fs.unlinkSync(path.join(process.cwd(), pathh))
-           res.redirect('/command')
+           res.redirect(/* 200, */ '/command')
            }
        catch (e) {
-       res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>DASHBOARD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a> 
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-ERROR OCCURRED: ${e}
-
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
-`) 
+       res.send(await _this.renderFile(path.join(__dirname, "views", "error.ejs"), { e }))
        }
 
        })
     
-    app.get('/guild/leave', islogin, function (req,res) {
+    app.get('/guild/leave', islogin, async function (req,res) {
         try { 
             bot.guilds.cache.get(req.query.id).leave()
-            res.redirect( '/guild')
+            res.redirect(/* 200, */ '/guild')
             }
         catch (e) {
-            res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>DASHBOARD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a> 
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-Failed to leave guild with reason: ${e}
-
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
-`) 
+          res.send(await _this.renderFile(path.join(__dirname, "views", "error.ejs"), { e }))
 
             }
         })
     
     
     
- app.get('/404', islogin ,function (req,res,next) {
-        res.status(404)
-       res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>DASHBOARD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a>
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-404 Not Found
-
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
-`) 
-
+ app.get('/status' ,async function (req,res,next) {
+        res.status(req.query.code || 200)
+       res.send(await _this.renderFile(path.join(__dirname, "views", "status.ejs")))
         })
     
     app.get('/shell', islogin, async(req, res) => {
-      res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>DASHBOARD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a> 
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-<div align=center>
-<form action="shell" method='post' autocomplete='off'>
-<input autocomplete="false" type="textarea" name="hidden" style="display:none">
-
-<input type='text' name='execute' placeholder='Type command to send to server' autocomplete='false' style="width:100" size="50">
-<input type='submit' value='Send!'>
-</form>
-</div>
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
-`) 
+      res.send(await _this.renderFile(path.join(__dirname, "views", "shell.ejs")))
 
     })
     
     app.post('/shell', islogin, async(req, res) => {
-      const exec = require('child_process')
       let result = '';
         try {
             result = await exec.execSync(req.body.execute).toString().replace(/\n/g, '<br>')
@@ -1639,237 +274,14 @@ function myFunction() {
         catch (e) {
             result = e
             }
-      res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>DASHBOARD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a> 
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-<p style="padding: 10px; border: 2px solid white;">${result}</p>
-<form action="shell" method='post' autocomplete='off'>
-<input autocomplete="false" type="text" name="hidden" style="display:none">
-
-<input type='text' placeholder='Type command to send to server' autocomplete='false' name='execute' style="width:50">
-<input type='submit' value='Send!'>
-</form>
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
-`) 
+      res.send(await _this.renderFile(path.join(__dirname, "views", "shell_result.ejs"), { result, req }))
 
     })
-    
+    // app.get('/login-c', async (req,res) => {
+    //   res.send(await _this.renderFile(path.join(__dirname, 'views', "login_c.ejs")))
+    // })
     app.get('/djseval', islogin, async(req, res) => {
-      res.send(`
-<!DOCTYPE html>
-<html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css">
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.js"></script>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/javascript/javascript.js"></script>
-
-<link rel="stylesheet"
-
-  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
-<head>
-<title>DASHBOARD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a>
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-<form action="djseval" method='post' autocomplete='off'>
-<textarea name='execute' id='execute' placeholder='Your node js code here' autocomplete='false'></textarea>
-<input type='submit' value='Send!'>
-</form>
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-<script>
-
-window.onload = function () {
-
-    var editor = CodeMirror.fromTextArea($("#execute")[0], {
-
-        lineNumbers: true,
-
-        lineWrapping: true,
-
-        mode: 'javascript',
-
-        theme: 'monokai'
-
-    });
-
-};
-
-</script>
-</body>
-</html>
-`) 
+      res.send(await _this.renderFile(path.join(__dirname, "views", "djseval.ejs")))
 
     })
     
@@ -1883,259 +295,14 @@ window.onload = function () {
         catch (e) {
             result = e
             }
-      res.send(`
-<!DOCTYPE html>
-<html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+      res.send(await _this.renderFile(path.join(__dirname, "views", "djseval_res.ejs"), { util: require('util'), req, result, path: "/djseval" }))
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css">
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.js"></script>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/javascript/javascript.js"></script>
-
-<link rel="stylesheet"
-
-  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
-<head>
-<title>DASHBOARD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a> 
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-<p style="padding: 10px; border: 2px solid white;">${require('util').inspect(result, {depth:0}).replace(/\n/g, '<br>')}</p>
-<form action="djseval" method='post' autocomplete='off'>
-<textarea placeholder='Type command to send to server' autocomplete='false' name='execute' id='execute'>${req.body.execute}</textarea>
-<div align=center>
-<input type='submit' value='Send!' style="background-color: #4CAF50;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;">
-</div>
-</form>
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-<script>
-window.onload = function () {
-    var editor = CodeMirror.fromTextArea($("#execute")[0], {
-        lineNumbers: true,
-        lineWrapping: true,
-        mode: 'javascript',
-        theme: 'monokai'
-    });
-};
-</script>
-</body>
-</html>
-`) 
 
     })
     
     
      app.get('/aoieval', islogin, async(req, res) => {
-      res.send(`
-<!DOCTYPE html>
-<html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css">
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.js"></script>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/javascript/javascript.js"></script>
-
-<link rel="stylesheet"
-
-  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
-<head>
-<title>DASHBOARD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a>
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-<form action="aoieval" method='post' autocomplete='off'>
-<textarea name='execute' id='execute' placeholder='Your aoi js code here' autocomplete='false'></textarea>
-<input type='submit' value='Send!'>
-</form>
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-<script>
-
-window.onload = function () {
-
-    var editor = CodeMirror.fromTextArea($("#execute")[0], {
-
-        lineNumbers: true,
-
-        lineWrapping: true,
-
-        mode: 'javascript',
-
-        theme: 'monokai'
-
-    });
-
-};
-
-</script>
-</body>
-</html>
-`) 
+      res.send(await _this.renderFile(path.join(__dirname, "views", "aoi_eval.ejs")))
 
     })
     
@@ -2149,8 +316,8 @@ window.onload = function () {
                     {},
                     [],
                     {
-                        name: "aoi Eval",
-                        code: `${req.body.execute}`,
+                      name: "aoi Eval",
+                    code: `${req.body.execute}`,
                     },
                     client.db,
                     true,
@@ -2161,230 +328,19 @@ window.onload = function () {
         catch (e) {
             result = e
             }
-      res.send(`
-<!DOCTYPE html>
-<html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css">
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.js"></script>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/javascript/javascript.js"></script>
-
-<link rel="stylesheet"
-
-  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
-<head>
-<title>DASHBOARD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a> 
-  <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-<p style="padding: 10px; border: 2px solid white;">${require('util').inspect(result, {depth:0}).replace(/\n/g, '<br>')}</p>
-<form action="aoieval" method='post' autocomplete='off'>
-<textarea placeholder='Type command to send to server' autocomplete='false' name='execute' id='execute'>${req.body.execute}</textarea>
-<input type='submit' value='Send!'>
-</form>
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-<script>
-window.onload = function () {
-    var editor = CodeMirror.fromTextArea($("#execute")[0], {
-        lineNumbers: true,
-        lineWrapping: true,
-        mode: 'javascript',
-        theme: 'monokai'
-    });
-};
-</script>
-</body>
-</html>
-`) 
+      res.send(await _this.renderFile(path.join(__dirname, "views", "djseval_res.ejs"), { result, req, util: require('util'), path: "/aoieval"}))
 
     })
     
     
    app.get('/reboot', islogin, async(req,res) => {
      
-      await res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>DASHBOARD</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-              background-color: #001f3f;
-                color: #F5F5F5;
-                    }
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
-}
-
-.topnav .icon {
-  display: none;
-}
-
-@media screen and (max-width: 600px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
-    float: right;
-    display: block;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive .icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .topnav.responsive a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-}
-</style>
-</head>
-<body>
-
-<div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
-  <a href="/command">Command</a>
-  <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
-The server/process is restarting, this dashboard should be offline for a few seconds, if your bot not coming online for a more than 2 minute, you can check it on your hosting panel
-
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
-`) 
+      await res.send(_this.renderFile(path.join(__dirname, "views", "reboot.ejs")))
 
        
        process.on("exit", () => {
            
-           require("child_process").spawn(process.argv.shift(), process.argv, {
+           exec.spawn(process.argv.shift(), process.argv, {
                 cwd: process.cwd(),
                 detached: true,
                 stdio: "inherit",
@@ -2393,25 +349,31 @@ function myFunction() {
         process.exit();
        })
     
-    function islogin(req,res,next) {
-        if(req.session.user==user && req.session.pass==pass){
+    async function islogin(req,res,next) {
+      // if(process.argv.length > 2) return next() 
+      if(req.user && !req.url.includes('/owner')){
             return next()
             }
      else {
-         res.redirect('/')
+         res.redirect(/* 200, */ '/')
          }
         }
     
     
-    function login(req,res,next) {
-        if(req.session.user!=user || req.session.pass!=pass){
+    async function login(req,res,next) {
+        if(!req.user){
             return next()
             }
      else {
-         res.redirect('/dash')
+         res.redirect(/* 200, */ '/dash')
          }
         }
-    
+    app.use("*", async (req,res,next) => {
+      console.log("404", req)
+      res.redirect(/* 200, */ "/status?code=404&r=" + encodeURIComponent(`Cannot ${req.method} on path ${req.url}`))
+    }, (err,req,res,next) => {
+      res.redirect(/* 200, */ "/status?code=500&r=" + encodeURIComponent(`Error:\n${require('util').inspect(err)}`))
+    })
     app.listen(port)
     console.log("dashboard ready in port: "+port)
     }
