@@ -1,4 +1,6 @@
 node_modules
 database
-config.json # used for tests.
-panel.db # used for tests.db.config
+# used for tests.
+config.json
+# used for tests.db.config 
+panel.db 
