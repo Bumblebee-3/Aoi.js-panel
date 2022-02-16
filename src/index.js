@@ -1525,7 +1525,7 @@ function myFunction() {
     
     
     
- app.get('/*', islogin ,function (req,res,next) {
+ app.get('/404beta', islogin ,function (req,res,next) {
         res.status(404)
        res.send(`
 <!DOCTYPE html>
