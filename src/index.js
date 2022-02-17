@@ -129,7 +129,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -268,7 +268,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -400,7 +400,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -590,7 +590,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -758,7 +758,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -903,7 +903,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1035,7 +1035,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1152,7 +1152,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1281,7 +1281,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1391,7 +1391,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1497,7 +1497,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1601,7 +1601,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1701,7 +1701,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1814,7 +1814,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -1929,7 +1929,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -2069,7 +2069,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -2195,7 +2195,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a>
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -2347,7 +2347,7 @@ body {
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
   <a href="/djseval">DjsEval</a>
-  <a href="/aoieval">AoiEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -2456,10 +2456,11 @@ body {
 <body>
 
 <div class="topnav" id="myTopnav">
-  <a href="/dash" class="active">Dashboard</a>
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
-  <a href="/shell">Shell</a>
+  <a href="/shell">Shell</a> 
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a> <a href="/stats">BotStats</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
@@ -2481,7 +2482,6 @@ function myFunction() {
 </body>
 </html>
 `) 
-
        
        process.on("exit", () => {
            
@@ -2493,6 +2493,142 @@ function myFunction() {
         });
         process.exit();
        })
+    
+    
+    app.get('/json/stats', islogin, async(req,res) => {
+      let client = bot
+      let days = Math.floor(client.uptime / 86400000);
+
+      let hours = Math.floor(client.uptime / 3600000) % 24;
+
+      let minutes = Math.floor(client.uptime / 60000) % 60;
+
+      let seconds = Math.floor(client.uptime / 1000) % 60;
+const initial = process.cpuUsage();
+  const start = Date.now();
+while (Date.now() - start > 1) ; 
+const final = process.cpuUsage(initial);
+ let cpu = ((final.user + final.system) / 1000).toFixed(2);
+    res.json({
+      "ram": process.memoryUsage().rss / 1024 / 1024,
+      "uptime": days + "d " +  hours + "h " + minutes + "m " +  seconds + "s ",
+      "cpu": cpu
+      
+    })
+    })
+    
+    
+    app.get('/stats',islogin,async(req,res) => {
+      res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+<title>DASHBOARD</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+              background-color: #001f3f;
+                color: #F5F5F5;
+                    }
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.topnav .icon {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .topnav a:not(:first-child) {display: none;}
+  .topnav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .topnav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="topnav" id="myTopnav">
+  <a href="/command">Command</a>
+  <a href="/guild">Guild</a>
+  <a href="/shell">Shell</a> 
+  <a href="/djseval">DjsEval</a>
+  <a href="/aoieval">AoiEval</a>
+  <a href="/stats">BotStats</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a>
+</div>
+
+<div id="stats"></div>
+
+<script>
+function stats() {
+  
+fetch('/json/stats')
+    .then(result => result.json())
+    .then((output) => {
+        document.getElementById("stats").innerHTML = \`
+    Ram usage: \${output.ram}MB<br>
+    Cpu usage: \${output.cpu}%<br>
+    Uptime: \${output.uptime}
+        \`
+});
+}
+setInterval(stats, 1000)
+function myFunction() {
+  var x = document.getElementById("myTopnav");
+  if (x.className === "topnav") {
+    x.className += " responsive";
+  } else {
+    x.className = "topnav";
+  }
+}
+</script>
+
+</body>
+</html>
+`)
+    })
     
     function islogin(req,res,next) {
         if(req.session.user==user && req.session.pass==pass){
