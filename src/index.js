@@ -2456,6 +2456,7 @@ body {
 <body>
 
 <div class="topnav" id="myTopnav">
+  <a href="/dash" class="active">Dashboard</a>
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
@@ -2588,6 +2589,7 @@ body {
 <body>
 
 <div class="topnav" id="myTopnav">
+  <a href="/dash" class="active">Dashboard</a>
   <a href="/command">Command</a>
   <a href="/guild">Guild</a>
   <a href="/shell">Shell</a> 
