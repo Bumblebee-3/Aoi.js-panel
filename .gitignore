@@ -1,2 +1,9 @@
 node_modules
+database
+
+# used for tests.
+config.json 
+
+# used for tests.db.config
+panel.db 
 .github

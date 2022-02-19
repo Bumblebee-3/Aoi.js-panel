@@ -6,7 +6,8 @@
   "scripts": {
     "build": "babel --presets env src -d ./ --ignore src/index.test.js",
     "dev": "babel --presets env src -d ./ --watch --ignore src/index.test.js",
-    "test": "jest --watch"
+    "test": "jest ",
+    "test:example": "node test.js"
   },
   "repository": {
     "type": "git",
@@ -23,18 +24,28 @@
     "aoi.js-panel",
     "aoijs-panel"
   ],
-  "author": ["Fight Farewell Fearless#9295","Bumblebee#8199"],
+  "author": "Fight Farewell Fearless#9295, Bumblebee#8199, NeonGamerBot_QK#1001 <> (https://saahil.is-a.dev), duckey | Nova dev#3049"
+  ,
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Bumblebee-3/Aoi.js-panel/issues"
   },
   "homepage": "https://github.com/Bumblebee-3/Aoi.js-panel",
   "dependencies": {
+    "aoi.js": "^5.0.8",
     "body-parser": "^1.19.1",
+    "connect-sqlite3": "^0.9.13",
+    "cookie-parser": "^1.4.6",
+    "debug": "^4.3.3",
+    "discord-bitfield-calculator": "^1.0.0",
+    "discord-oauth2": "^2.9.0",
+    "ejs": "^3.1.6",
     "express": "^4.17.2",
     "express-session": "^1.17.2",
+    "extends-classes": "^1.0.5",
     "fs": "0.0.1-security",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "test": "^0.6.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
