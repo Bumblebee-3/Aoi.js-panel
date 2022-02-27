@@ -1,15 +1,17 @@
 //Requires as imports up-top
 const path = require('path')
 const fs = require('fs')
+const Api = require('./api')
 const bodyParser = require("body-parser")
 const sessions = require('express-session')
 const express = require('express')
-var SQLiteStore = require('connect-sqlite3')(sessions);
 const exec = require('child_process')
 const ejs = require('ejs')
+const Theme = require('./themes')
 const debug = require('debug')("aoijs.panel:main")
 const { DiscordClient }= require('./discord_handle.js')
 class Dash {
+  static Session = sessions;
   constructor(ops) {
     let name = ops;
     let bot = name.bot;
@@ -20,13 +22,17 @@ class Dash {
     this.ops = name;
 this.ownersIds = ops.owners || [];
 if(this.ownersIds.length < 0) console.warn("No owners specified, nobody can access commands!")
+this.information  = ops.information.homepage;
 bot.panel = this;
     this.bot = bot
 this.port = port
 this.username = username
+if(ops.express?.store) this.store = ops.express?.store;
       this.pass = pass
       this.cmd = command
-
+      this.api = new Api(this)
+      if(!Theme.isTheme(ops.theme)) console.warn("No theme specified, using default theme")
+      this.theme = ops.theme || Theme.FLAGS.default;
 this.discord = new DiscordClient(ops.discord, this)
   }
   renderFile(path, parms, cb) {
@@ -70,11 +76,12 @@ const pass = this.pass
     app.use(sessions({
         secret: "aoijsdashboardisepictbh10101000",
         saveUninitialized:true,
-        store: new SQLiteStore(this.ops.db || {}),
+        store: _this.store,
         cookie: { maxAge: oneDay, httpOnly: false },
         resave: false 
     }));
     app.use(this.discord.session())
+    app.use('/api/', this.api.app)
     app.get('/auth/discord/redirect', (req,res) => res.redirect(/* 200, */ this.discord.GetAuthUrl()))
     app.get('/command/edit', islogin, async function(req,res) {
         let pathh = req.query.path
@@ -100,9 +107,13 @@ const pass = this.pass
     })
     
     
-    app.get('/', login,async function(req,res) {
+    app.get('/login', login,async function(req,res) {
 
         res.send(await _this.renderFile(path.join(__dirname, "views", "login.ejs")))
+        
+        })
+        app.get('/', async function(req,res) {
+res.send(await _this.renderFile(path.join(Theme.getPath(_this.theme), "index.ejs"),{ info: _this.information, bot }) )
         })
     
     app.get('/auth/discord', async (req,res,next) => await this.discord.authorize(req,res,next), (req,res) => {
@@ -221,7 +232,7 @@ info = `Id: ${guild.id}<br>Name: ${guild.name}<br>Owner Id: ${guild.ownerId}<br>
         fs.writeFileSync(process.cwd() + path.sep + nowname, req.body.code)
         let nowpath = nowname.replace(/,/g, '%2F')
        
-        res.redirect( 200, `/command/edit?path=${nowpath}`)
+        res.redirect(/* 200 ,*/ `/command/edit?path=${nowpath}`)
             }
         catch (e) {
           res.send(await _this.renderFile(path.join(__dirname, "views", "error.ejs"), { e }))
@@ -380,5 +391,6 @@ info = `Id: ${guild.id}<br>Name: ${guild.name}<br>Owner Id: ${guild.ownerId}<br>
 }
 
 module.exports = {
-  Dash
+  Dash,
+  Themes: Theme
 }

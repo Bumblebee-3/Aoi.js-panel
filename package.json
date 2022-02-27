@@ -24,8 +24,7 @@
     "aoi.js-panel",
     "aoijs-panel"
   ],
-  "author": "Fight Farewell Fearless#9295, Bumblebee#8199, NeonGamerBot_QK#1001 <> (https://saahil.is-a.dev), duckey | Nova dev#3049"
-  ,
+  "author": "Fight Farewell Fearless#9295, Bumblebee#8199, NeonGamerBot_QK#1001 <> (https://saahil.is-a.dev), duckey | Nova dev#3049",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Bumblebee-3/Aoi.js-panel/issues"
@@ -33,7 +32,7 @@
   "homepage": "https://github.com/Bumblebee-3/Aoi.js-panel",
   "dependencies": {
     "aoi.js": "^5.0.8",
-    "body-parser": "^1.19.1",
+    "body-parser": "^1.19.2",
     "connect-sqlite3": "^0.9.13",
     "cookie-parser": "^1.4.6",
     "debug": "^4.3.3",
