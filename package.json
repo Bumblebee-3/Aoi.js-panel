@@ -33,6 +33,7 @@
   "dependencies": {
     "aoi.js": "^5.0.8",
     "body-parser": "^1.19.2",
+    "chalk": "4",
     "connect-sqlite3": "^0.9.13",
     "cookie-parser": "^1.4.6",
     "debug": "^4.3.3",
@@ -43,6 +44,7 @@
     "express-session": "^1.17.2",
     "extends-classes": "^1.0.5",
     "fs": "0.0.1-security",
+    "node-fetch": "^2.6.7",
     "path": "^0.12.7",
     "test": "^0.6.0"
   },

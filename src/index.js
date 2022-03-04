@@ -10,6 +10,7 @@ const ejs = require('ejs')
 const Theme = require('./themes')
 const debug = require('debug')("aoijs.panel:main")
 const { DiscordClient }= require('./discord_handle.js')
+require('./version_check');
 class Dash {
   static Session = sessions;
   constructor(ops) {
