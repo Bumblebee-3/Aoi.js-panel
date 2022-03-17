@@ -1,15 +1,16 @@
-//Requires as imports up-top
-const path = require('path')
-const fs = require('fs')
-const Api = require('./api')
-const bodyParser = require("body-parser")
-const sessions = require('express-session')
-const express = require('express')
-const exec = require('child_process')
-const ejs = require('ejs')
-const Theme = require('./themes')
-const debug = require('debug')("aoijs.panel:main")
-const { DiscordClient }= require('./discord_handle.js')
+/* eslint-disable linebreak-style */
+// Requires as imports up-top
+const path = require('path');
+const fs = require('fs');
+const Api = require('./api');
+const bodyParser = require('body-parser');
+const sessions = require('express-session');
+const express = require('express');
+const exec = require('child_process');
+const ejs = require('ejs');
+const Theme = require('./themes');
+const debug = require('debug')('aoijs.panel:main');
+const {DiscordClient}= require('./discord_handle.js');
 require('./version_check');
 class Dash {
   static Session = sessions;
@@ -231,7 +232,7 @@ info = `Id: ${guild.id}<br>Name: ${guild.name}<br>Owner Id: ${guild.ownerId}<br>
         nowname = nowname.replace(/\//g, path.sep)
    nowname = nowname.replace('./','')
         fs.writeFileSync(process.cwd() + path.sep + nowname, req.body.code)
-        let nowpath = nowname.replace(/,/g, '%2F')
+        const nowpath = nowname.replace(/,/g, '%2F')
        
         res.redirect(/* 200 ,*/ `/command/edit?path=${nowpath}`)
             }

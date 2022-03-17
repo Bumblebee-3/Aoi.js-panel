@@ -1,7 +1,7 @@
-fetch("/api/stats").then(r => r.json().then(d => {
-    const channels = document.querySelector("#channels")
-    const servers = document.querySelector("#servers")
-    const users = document.querySelector("#users")
+fetch('/api/stats').then((r) => r.json().then((d) => {
+    const channels = document.querySelector('#channels')
+    const servers = document.querySelector('#servers')
+    const users = document.querySelector('#users')
 let user_i = 0;
 let ch_i = 0;
 let g_i = 0;

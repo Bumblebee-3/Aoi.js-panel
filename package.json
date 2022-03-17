@@ -7,7 +7,7 @@
     "build": "babel --presets env src -d ./ --ignore src/index.test.js",
     "dev": "babel --presets env src -d ./ --watch --ignore src/index.test.js",
     "test": "jest ",
-    "test:example": "node test.js"
+    "test:example": "node example.js"
   },
   "repository": {
     "type": "git",
@@ -51,6 +51,8 @@
     "babel-cli": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.6.0",
+    "eslint": "^8.10.0",
+    "eslint-config-google": "^0.14.0",
     "jest": "^27.5.1"
   }
 }

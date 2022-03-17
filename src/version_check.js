@@ -1,6 +1,7 @@
 const chalk = require('chalk');
 const fetch = require('node-fetch');
 ;(async () => {
+    if(process.env.JEST_WORKER_ID !== undefined) return; // Tests are running no logs
     const data = await fetch('https://registry.npmjs.com/aoi.js-panel').then(r => r.json());
     let c_version = require('../package.json').version
     let l_version = data["dist-tags"].latest;
