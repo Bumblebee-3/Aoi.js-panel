@@ -204,6 +204,7 @@ Project Link: [https://github.com/Bumblebee-3/Aoi.js-panel](https://github.com/B
 * [Fight Farewell Fearless#9295]()
 * [Bumblebee#8199]()
 * [CODING WITH ARNOB ❥#0088]()
+* [duckey | Nova dev#3049](https://dashboard.nova-bot.tk)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
