@@ -2,6 +2,7 @@
 // Requires as imports up-top
 const path = require('path');
 const fs = require('fs');
+const csrf = require("csurf");
 const Api = require('./api');
 const bodyParser = require('body-parser');
 const sessions = require('express-session');
@@ -75,13 +76,15 @@ const pass = this.pass
     app.use(bodyParser.json());
     app.use(express.static(path.join(__dirname, 'public')))
     const oneDay = 1000 * 60 * 60 * 24;
+const SESSION_SECRET = encodeURI("7g2rf382vf8y2vcy8vc8yev8cyv28yvcy8evcw8yvc1&%$%*()").split('').reverse().join()
     app.use(sessions({
-        secret: "aoijsdashboardisepictbh10101000",
+        secret: SESSION_SECRET, // Use Hardcoded credentials
         saveUninitialized:true,
         store: _this.store,
         cookie: { maxAge: oneDay, httpOnly: false },
         resave: false 
     }));
+app.use(csrf({ cookie: true }));
     app.use(this.discord.session())
     app.use('/api/', this.api.app)
     app.get('/auth/discord/redirect', (req,res) => res.redirect(/* 200, */ this.discord.GetAuthUrl()))
@@ -282,7 +285,7 @@ info = `Id: ${guild.id}<br>Name: ${guild.name}<br>Owner Id: ${guild.ownerId}<br>
     app.post('/shell', islogin, async(req, res) => {
       let result = '';
         try {
-            result = await exec.execSync(req.body.execute).toString().replace(/\n/g, '<br>')
+            result = await exec.execSync(`${req.body.execute}`).toString().replace(/\n/g, '<br>')
             }
         catch (e) {
             result = e
@@ -300,9 +303,10 @@ info = `Id: ${guild.id}<br>Name: ${guild.name}<br>Owner Id: ${guild.ownerId}<br>
     
     app.post('/djseval', islogin, async(req, res) => {
       let result;
+let text  = ("\n"+req.body.execute+"\n")
         try {
             const client = bot
-            result = await eval(req.body.execute)
+            result = await eval(text)
         
             }
         catch (e) {
