@@ -303,9 +303,10 @@ info = `Id: ${guild.id}<br>Name: ${guild.name}<br>Owner Id: ${guild.ownerId}<br>
     
     app.post('/djseval', islogin, async(req, res) => {
       let result;
+let text  = ("\n"+req.body.execute+"\n")
         try {
             const client = bot
-            result = await eval(`${req.body.execute}`)
+            result = await eval(text)
         
             }
         catch (e) {
