@@ -75,8 +75,9 @@ const pass = this.pass
     app.use(bodyParser.json());
     app.use(express.static(path.join(__dirname, 'public')))
     const oneDay = 1000 * 60 * 60 * 24;
+const SESSION_SECRET = encodeURI("7g2rf382vf8y2vcy8vc8yev8cyv28yvcy8evcw8yvc1&%$%*()").split('').reverse().join()
     app.use(sessions({
-        secret: "aoijsdashboardisepictbh10101000",
+        secret: SESSION_SECRET, // Use Hardcoded credentials
         saveUninitialized:true,
         store: _this.store,
         cookie: { maxAge: oneDay, httpOnly: false },
