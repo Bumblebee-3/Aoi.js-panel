@@ -283,7 +283,7 @@ info = `Id: ${guild.id}<br>Name: ${guild.name}<br>Owner Id: ${guild.ownerId}<br>
     app.post('/shell', islogin, async(req, res) => {
       let result = '';
         try {
-            result = await exec.execSync(req.body.execute).toString().replace(/\n/g, '<br>')
+            result = await exec.execSync(`${req.body.execute}`).toString().replace(/\n/g, '<br>')
             }
         catch (e) {
             result = e
@@ -303,7 +303,7 @@ info = `Id: ${guild.id}<br>Name: ${guild.name}<br>Owner Id: ${guild.ownerId}<br>
       let result;
         try {
             const client = bot
-            result = await eval(req.body.execute)
+            result = await eval(`${req.body.execute}`)
         
             }
         catch (e) {
