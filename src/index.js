@@ -2,6 +2,7 @@
 // Requires as imports up-top
 const path = require('path');
 const fs = require('fs');
+const csrf = require("csurf");
 const Api = require('./api');
 const bodyParser = require('body-parser');
 const sessions = require('express-session');
@@ -83,6 +84,7 @@ const SESSION_SECRET = encodeURI("7g2rf382vf8y2vcy8vc8yev8cyv28yvcy8evcw8yvc1&%$
         cookie: { maxAge: oneDay, httpOnly: false },
         resave: false 
     }));
+app.use(csrf({ cookie: true }));
     app.use(this.discord.session())
     app.use('/api/', this.api.app)
     app.get('/auth/discord/redirect', (req,res) => res.redirect(/* 200, */ this.discord.GetAuthUrl()))
