@@ -1,3 +1,5 @@
+import { Client } from "discord.js"
+
 const dash =require("./src/index.js");
 const aoi = require("aoi.js")
 var SQLiteStore = require('connect-sqlite3')(dash.Dash.Session);
@@ -8,7 +10,7 @@ prefix: "!",
 intents: ["GUILDS", "GUILD_MESSAGES"],
 // database: { tables: ["ma }
 })
-bot.on('ready', (c) => {
+bot.on('ready', (c: Client) => {
     const dt = new dash.Dash({
         bot:bot,
         port:3000,
@@ -16,7 +18,7 @@ bot.on('ready', (c) => {
         password: config.pass,
         command:"./commands/",
         discord: {
-            clientId: c.user.id,
+            clientId: c.user?.id,
             clientSecret: config.secret,
             redirectUri: "http://localhost:3000/auth/discord" 
         },

@@ -4,8 +4,6 @@
   "description": "A cool admin panel for aoi.js",
   "main": "./src/index.js",
   "scripts": {
-    "build": "babel --presets env src -d ./ --ignore src/index.test.js",
-    "dev": "babel --presets env src -d ./ --watch --ignore src/index.test.js",
     "test": "jest ",
     "test:example": "node example.js"
   },
@@ -24,12 +22,15 @@
     "aoi.js-panel",
     "aoijs-panel"
   ],
-  "author": "Fight Farewell Fearless#9295, Bumblebee#8199, NeonGamerBot_QK#1001 <> (https://saahil.is-a.dev), duckey | Nova dev#3049",
+  "author": "Fight Farewell Fearless#9295, Bumblebee#8199, NeonGamerBot_QK#1001 <neon@saahil.tk> (https://saahil.is-a.dev), duckey | Nova dev#3049",
   "bugs": {
     "url": "https://github.com/Bumblebee-3/Aoi.js-panel/issues"
   },
   "homepage": "https://github.com/Bumblebee-3/Aoi.js-panel",
   "dependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.9",
+    "@types/express": "^4.17.13",
     "aoi.js": "^5.0.8",
     "body-parser": "^1.19.2",
     "chalk": "4",
@@ -45,10 +46,17 @@
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.7",
     "path": "^0.12.7",
-    "test": "^0.6.0"
+    "test": "^0.6.0",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
+    "@babel/plugin-proposal-object-rest-spread": "^7.17.3",
+    "@babel/plugin-syntax-class-properties": "^7.12.13",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.6.0",
     "eslint": "^8.10.0",

@@ -1,15 +1,62 @@
 import { Bot } from "aoi.js";
 
-declare module "aoi.js-panel"
-export class Dash {
+declare module "aoi.js-panel";
+export interface DashInterface {
+start(): void;
+ops: DashOptions;
 bot: Bot;
-constructor(ops: Options)
+port: number;
+username: string;
+ownersIds: string[];
+information: {
+    body: {
+    title: string;
+    description: string;
+    }[];
+    
+};
+    store: any;
+    cmd: string;
+    api: Api;
+    theme: ThemeFlags;
+discord: DiscordInterface;
+}
+
+export class Dash implements DashInterface {
+// bot: Bot;
+// ops: DashOptions;
+// ownersIds: string[];
+
+constructor(ops: DashOptions)
 
 
 start(): void
 }
-export interface Options {
+export interface DashOptions {
 bot: Bot;
+port: number;
+username: string;
+pass: string;
+command: string;
+discord: {
+clientId: string;
+clientSecret: string;
+redirectUri: string;
+};
+express: {
+session: any;
+store: any;
+};
+theme: number;
+information: {
+homepage: {
+body: {
+title: string;
+description: string;
+}[];
+};
+};
+owners: string[];
 }
 export class Themes {
     static FLAGS: ThemeFlags
@@ -18,7 +65,5 @@ export class Themes {
     static isTheme(theme: Number): boolean
     
 }
-export interface ThemeFlags {
-    0: String,
-    1: String
+export enum ThemeFlags {
 }

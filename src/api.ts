@@ -1,6 +1,8 @@
+import { Dashboard } from "./index"
+
 const express = require('express');
 module.exports = class Api {
-    constructor(Self) {
+    constructor(Self: Dashboard) {
         this.self = Self;
         this.app = express();
         this.app.get('/stats', async (req,res) => {
