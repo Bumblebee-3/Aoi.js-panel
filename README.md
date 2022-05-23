@@ -202,7 +202,7 @@ Project Link: [https://github.com/Bumblebee-3/Aoi.js-panel](https://github.com/B
 
 * [NeonGamerBot_QK#1001](https://saahil.tk)
 * [Fight Farewell Fearless#9295]()
-* [Bumblebee#8199]()
+* [Bumblebee](https://github.com/Bumblebee-3/)
 * [CODING WITH ARNOB ❥#0088]()
 * [duckey | Nova dev#3049](https://dashboard.nova-bot.tk)
 
